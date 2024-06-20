@@ -123,7 +123,7 @@ onMounted(fetchMovieDetails)
         </div>
 
         <div class="recommendations" v-if="recommendations.length > 0">
-          <h3>추천 영상</h3>
+          <h3>추천 영화</h3>
           <div class="recommendations-container">
             <ul class="recommendations-list">
               <li v-for="recommendation in recommendations" :key="recommendation.id" class="recommendation">
