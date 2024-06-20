@@ -1,29 +1,38 @@
 <script setup>
-import { ref, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { ref, onMounted, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
 import HeaderSection from '@/components/HeaderSection.vue'
 
 const searchResults = ref([])
+const searchQuery = ref('')
 const apikey = '323028b4f64c5b9effe07560441a913e'
 const route = useRoute()
+const router = useRouter()
 const currentIndex = ref(0)
 const itemsPerPage = 5
 
 const fetchSearchResults = async () => {
-  const query = route.query.q
+  const query = route.query.q || searchQuery.value
   if (query) {
     try {
       const response = await axios.get(`https://api.themoviedb.org/3/search/movie?api_key=${apikey}&query=${query}&language=ko-KR`)
       searchResults.value = response.data.results
+      currentIndex.value = 0 // Reset the index on new search
     } catch (error) {
       console.log(error)
     }
   }
 }
 
-const openMovie = (id) => {
-  window.open(`https://www.themoviedb.org/movie/${id}`, '_blank')
+const performSearch = () => {
+  if (searchQuery.value.trim()) {
+    router.push({ name: 'search', query: { q: searchQuery.value } })
+  }
+}
+
+const goToDetails = (id) => {
+  router.push({ name: 'about', params: { id } })
 }
 
 const nextSlide = () => {
@@ -39,6 +48,8 @@ const prevSlide = () => {
 }
 
 onMounted(fetchSearchResults)
+
+watch(route, fetchSearchResults) // Watch for route changes and refetch results
 </script>
 
 <template>
@@ -49,7 +60,7 @@ onMounted(fetchSearchResults)
       <header id="header" role="banner">
         <div class="header__inner">
           <div class="search">
-            <input v-model="searchQuery" type="text" placeholder="Search" />
+            <input v-model="searchQuery" type="text" placeholder="Search" @keyup.enter="performSearch" />
             <button @click="performSearch"><v-icon name="hi-search" scale="1.2" class="icon_search"></v-icon></button>
           </div>
           <div class="community">Community</div>
@@ -67,7 +78,7 @@ onMounted(fetchSearchResults)
                 <img :src="'https://image.tmdb.org/t/p/w500/' + movie.poster_path" :alt="movie.title" />
                 <div class="overlay">
                   <h2>{{ movie.title }}</h2>
-                  <button @click="openMovie(movie.id)">상세 정보</button>
+                  <button @click="goToDetails(movie.id)">상세 정보</button>
                 </div>
               </div>
             </div>
@@ -207,7 +218,7 @@ onMounted(fetchSearchResults)
 
   .movie-list {
     display: flex;
-    gap: 20px;
+    justify-content: space-evenly;
     overflow: hidden;
     width: calc(100% - 100px); /* Adjust based on button sizes */
   }
@@ -216,8 +227,7 @@ onMounted(fetchSearchResults)
     position: relative;
     width: calc(20% - 20px);
     margin-bottom: 20px;
-    border: 1px solid #ccc;
-    border-radius: 10px;
+    border: 1px solid var(--black100);
     overflow: hidden;
   }
 
@@ -233,21 +243,27 @@ onMounted(fetchSearchResults)
     background: rgba(0, 0, 0, 0.7);
     color: white;
     text-align: center;
-    padding: 10px;
+    padding: 20px;
   }
 
   .overlay h2 {
+    font-family: var(--fontJ);
     font-size: 1.2rem;
     margin: 0;
   }
 
   .overlay button {
-    background-color: #f05a28;
+    position: fixed;
+    background-color: rgba(0, 0, 0, 0.6588235294);
+    color: var(--pointColor);
     border: none;
-    padding: 10px 20px;
+    padding: 13px 33px;
     cursor: pointer;
-    border-radius: 5px;
-    margin-top: 10px;
+    font-size: 1rem;
+    border-radius: 45px;
+    font-family: var(--fontD);
+    margin-top: -5rem;
+    display: contents;
   }
 }
 </style>

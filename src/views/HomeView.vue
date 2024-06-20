@@ -1,8 +1,8 @@
 <script setup>
-import { onMounted, ref } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import axios from 'axios'
 import HeaderSection from '@/components/HeaderSection.vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 
 const latestMovies = ref([])
 const popularMovies = ref([])
@@ -17,6 +17,7 @@ const moviesPerPage = 5
 
 const selectedVideo = ref(null)
 const router = useRouter()
+const route = useRoute()
 
 const fetchMovies = async () => {
   try {
@@ -60,6 +61,7 @@ const performSearch = () => {
 }
 
 const goToDetails = (id) => {
+  console.log(`Navigating to details of movie ID: ${id}`) // 디버그 로그 추가
   router.push({ name: 'about', params: { id } })
 }
 
@@ -108,6 +110,13 @@ const prevSlideTop = () => {
 }
 
 onMounted(fetchMovies)
+
+watch(route, () => {
+  if (route.name === 'search' && route.query.q) {
+    searchQuery.value = route.query.q
+    fetchMovies()
+  }
+})
 </script>
 
 <template>
@@ -118,7 +127,7 @@ onMounted(fetchMovies)
       <header id="header" role="banner">
         <div class="header__inner">
           <div class="search">
-            <input v-model="searchQuery" type="text" placeholder="Search" />
+            <input v-model="searchQuery" type="text" placeholder="Search" @keyup.enter="performSearch" />
             <button @click="performSearch"><v-icon name="hi-search" scale="1.2" class="icon_search"></v-icon></button>
           </div>
           <div class="community">Community</div>
@@ -215,7 +224,6 @@ onMounted(fetchMovies)
   width: 85%;
   height: 100vh;
   position: relative;
-  background-image: url('https://image.tmdb.org/t/p/w600_and_h900_bestv2/pmemGuhr450DK8GiTT44mgwWCP7.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

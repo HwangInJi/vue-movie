@@ -54,6 +54,7 @@ const goToHome = () => {
   width: 15%;
   height: 100vh;
   position: fixed;
+  background-color: #242424;
 
   .logo {
     text-align: left;
