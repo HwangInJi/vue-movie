@@ -392,6 +392,7 @@ watch(route, () => {
     margin-left: 1.3rem;
     section {
       margin-bottom: 3rem;
+      padding-top: 1.5rem;
     }
     .title01 {
       font-size: 2vw;

@@ -392,6 +392,27 @@ onMounted(fetchMovieDetails)
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+@media (max-width:800px){
+    .movie-details {
+    display: flex;
+    width: 100%;
+    margin-bottom: 20px;
+    margin-top: 2rem;
+  }
+}
+
+@media (max-width:600px){
+    .movie-details {
+    display: flex;
+    width: 100%;
+    margin-bottom: 20px;
+    margin-top: 2rem;
+  }
+  .poster{
+    display: none;
+  }
+}
+
 @keyframes scroll {
   0% {
     transform: translateX(0);
